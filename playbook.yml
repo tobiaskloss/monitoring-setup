@@ -23,20 +23,20 @@
   tasks:
     - name: Clone docker-collection git
       git:
-        repo: 'https://github.com/tobiaskloss/docker-collection.git'
-        dest: /opt/docker-collection
+        repo: 'https://github.com/tobiaskloss/docker-monitoring-env.git'
+        dest: /opt/docker-monitoring-env
         accept_hostkey: yes
         force: yes
     - name: Place Grafana env file
       template:
         src: templates/grafana.env.j2
-        dest: /opt/docker-collection/prometheus-grafana/grafana.env
+        dest: /opt/docker-monitoring-env/prometheus-grafana/grafana.env
     - name: Create Docker Network
       docker_network:
         name: global-nginx-proxy-net
     - name: Start Nginx Proxy
       docker_compose:
-        project_src: /opt/docker-collection/nginx-proxy-ssl/
+        project_src: /opt/docker-monitoring-env/nginx-proxy-ssl/
     - name: Start Grafana and Prometheus 
       docker_compose:
-        project_src: /opt/docker-collection/prometheus-grafana/
+        project_src: /opt/docker-monitoring-env/prometheus-grafana/
