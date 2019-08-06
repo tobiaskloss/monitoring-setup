@@ -1,0 +1,42 @@
+---
+- name: Install Docker and run nginx-proxy-ssl and prometheus-grafana on it
+  hosts: hetzner
+  remote_user: root
+  vars_files: 
+    - var_vault.yml
+  vars:
+    docker_compose_version: "1.24.1"
+    git_version: "2.22.0"
+   
+    pip_install_packages:
+      - name: docker
+        version: "4.0.2"
+      - name: docker-compose
+        version: "1.24.1"
+
+  roles:
+    - geerlingguy.repo-epel
+    - geerlingguy.pip
+    - geerlingguy.docker
+    - geerlingguy.git
+
+  tasks:
+    - name: Clone docker-collection git
+      git:
+        repo: 'https://github.com/tobiaskloss/docker-collection.git'
+        dest: /opt/docker-collection
+        accept_hostkey: yes
+        force: yes
+    - name: Place Grafana env file
+      template:
+        src: templates/grafana.env.j2
+        dest: /opt/docker-collection/prometheus-grafana/grafana.env
+    - name: Create Docker Network
+      docker_network:
+        name: global-nginx-proxy-net
+    - name: Start Nginx Proxy
+      docker_compose:
+        project_src: /opt/docker-collection/nginx-proxy-ssl/
+    - name: Start Grafana and Prometheus 
+      docker_compose:
+        project_src: /opt/docker-collection/prometheus-grafana/

@@ -1,0 +1,4 @@
+---
+grafana_admin_password: "AVerySecurePassword"
+grafana_hostname: "yourdomain.com"
+letsencrypt_mail: "you@yourdomain.com"
